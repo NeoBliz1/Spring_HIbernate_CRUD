@@ -5,6 +5,8 @@ import hibernate.model.User;
 import java.util.List;
 
 public interface UserService {
-    void add(User user);
-    List<User> getListUsers();
+    void addUserToDatabase(User user);
+    void removeUserById(long id);
+    void editUserData(User user);
+    List<User> getUsersList();
 }
