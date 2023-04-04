@@ -13,11 +13,13 @@ import web.service.UserWebServiceImpl;
 @Controller
 public class UsersController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserWebServiceImpl.class);
+
 	private final UserWebServiceImpl innerUserWebServiceImpl;
 	@Autowired
 	public UsersController(UserWebServiceImpl userWebServiceImpl) {
 		innerUserWebServiceImpl = userWebServiceImpl;
 	}
+    
     @GetMapping("/")
     public String printUsers(ModelMap model) {
         model.addAttribute("usersList", innerUserWebServiceImpl.getUsersListForWeb());
