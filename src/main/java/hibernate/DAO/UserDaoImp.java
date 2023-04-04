@@ -1,30 +1,56 @@
 package hibernate.DAO;
 
 import hibernate.model.User;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
+@Repository("userDaoImp")
 public class UserDaoImp implements UserDao {
-    private final SessionFactory innerSessionFactory;
+    private final EntityManager innerEntityManager;
 
     @Autowired
-    public UserDaoImp(SessionFactory sessionFactory) {
-        innerSessionFactory = sessionFactory;
+    public UserDaoImp(EntityManagerFactory entityManagerFactory) {
+        innerEntityManager = entityManagerFactory.createEntityManager();
     }
 
     @Override
-    public void add(User user) {
-        innerSessionFactory.getCurrentSession().persist(user);
+    public void addUserToDatabase(User user) {
+        innerEntityManager.getTransaction().begin();
+        innerEntityManager.persist(user);
+        innerEntityManager.getTransaction().commit();
+    }
+
+    @Override
+    public void removeUserById(long id) {
+        innerEntityManager.getTransaction().begin();
+        User user = innerEntityManager.find(User.class, id);
+        if (user != null) {
+            innerEntityManager.remove(user);
+        }
+        innerEntityManager.getTransaction().commit();
+    }
+
+    @Override
+    public void editUserData(User user) {
+        innerEntityManager.getTransaction().begin();
+        User existingUser = innerEntityManager.find(User.class, user.getId());
+        if (existingUser != null) {
+            existingUser.setFirstName(user.getFirstName());
+            existingUser.setLastName(user.getLastName());
+            existingUser.setEmail(user.getEmail());
+            innerEntityManager.merge(existingUser);
+        }
+        innerEntityManager.getTransaction().commit();
     }
 
     @Override
     public List<User> getListUsers() {
-        TypedQuery<User> query = innerSessionFactory.getCurrentSession()
+        TypedQuery<User> query = innerEntityManager
                 .createQuery("from User", User.class);
         return query.getResultList();
     }
