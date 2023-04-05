@@ -1,14 +1,15 @@
 package hibernate.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Objects;
 
 
 @Entity
 @Table(name = "users")
+@NoArgsConstructor(force = true)
+@RequiredArgsConstructor
 @Getter @Setter
 public class User {
 
@@ -17,22 +18,11 @@ public class User {
    @Column(name = "id")
    private Long id;
 
-   @Column
-   private String firstName;
+   @NonNull private String firstName;
 
-   @Column
-   private String lastName;
+   @NonNull private String lastName;
 
-   @Column
-   private String email;
-
-   public User() {}
-   
-   public User(String firstName, String lastName, String email) {
-      this.firstName = firstName;
-      this.lastName = lastName;
-      this.email = email;
-   }
+   @NonNull private String email;
 
    @Override
    public boolean equals(Object obj) {
