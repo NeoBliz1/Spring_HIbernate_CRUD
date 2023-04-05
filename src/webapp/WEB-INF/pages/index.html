@@ -16,12 +16,32 @@
             color: green;
         }
 
-        a.edit:visited{
+        a.edit:visited {
             color: darkgreen;;
+        }
+
+        @keyframes fade-out {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        .fadeOut {
+            animation: fade-out 1s forwards;
         }
 
         p {
             margin: 0;
+        }
+
+        .removeUserErr {
+            background-color: red;
+            border: double;
+            padding: 1em;
+            font-weight: bold;
         }
 
         .tg {
@@ -99,6 +119,9 @@
 </head>
 <body>
 <div style="display: flex; flex-flow: column; align-items: center; justify-content: center; height: 100vh;">
+    <div th:if="${userRemoveErrMsg}" class="removeUserErr" role="alert">
+        <span th:text="${userRemoveErrMsg}"></span>
+    </div>
     <table class="tg">
         <thead>
         <tr>
@@ -230,8 +253,30 @@
         // Add event listener to new Save link
         saveLink.addEventListener("click", saveHandler);
     }
-    // Add event listeners to edit links
-    editLinks.forEach(link => link.addEventListener("click", editHandler));
+
+    onPageLoad = () => {
+        // Remove the onPageLoad listener
+        document.removeEventListener("DOMContentLoaded", onPageLoad);
+
+        // Add event listeners to edit links
+        editLinks.forEach(link => link.addEventListener("click", editHandler));
+
+        // Check if an error div is present in the html
+        const errorDivTag = document.querySelector(".removeUserErr");
+
+        // Fade out the error block
+        if (errorDivTag) {
+            setTimeout(function () {
+                errorDivTag.classList.add("fadeOut");
+                setTimeout(function () {
+                    errorDivTag.remove();
+                }, 2000);
+            }, 2000);
+        }
+    }
+
+    // Add the onPageLoad listener
+    document.addEventListener("DOMContentLoaded", onPageLoad);
 </script>
 </body>
 </html>

@@ -4,13 +4,16 @@ import hibernate.model.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository("userDaoImp")
+@Slf4j
 public class UserDaoImp implements UserDao {
+
     private final EntityManager innerEntityManager;
 
     @Autowired
@@ -26,13 +29,17 @@ public class UserDaoImp implements UserDao {
     }
 
     @Override
-    public void removeUserById(long id) {
+    public void removeUserById(long id) throws IllegalArgumentException {
         innerEntityManager.getTransaction().begin();
         User user = innerEntityManager.find(User.class, id);
         if (user != null) {
             innerEntityManager.remove(user);
+            innerEntityManager.getTransaction().commit();
+        } else {
+            log.info("UserDao: User is null");
+            innerEntityManager.getTransaction().rollback();
+            throw new IllegalArgumentException("User with id " + id + " does not exist");
         }
-        innerEntityManager.getTransaction().commit();
     }
 
     @Override

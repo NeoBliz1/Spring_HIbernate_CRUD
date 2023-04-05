@@ -16,12 +16,32 @@
             color: green;
         }
 
-        a.edit:visited{
+        a.edit:visited {
             color: darkgreen;;
+        }
+
+        @keyframes fade-out {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        .fadeOut {
+            animation: fade-out 1s forwards;
         }
 
         p {
             margin: 0;
+        }
+
+        .removeUserErr {
+            background-color: red;
+            border: double;
+            padding: 1em;
+            font-weight: bold;
         }
 
         .tg {
@@ -99,6 +119,9 @@
 </head>
 <body>
 <div style="display: flex; flex-flow: column; align-items: center; justify-content: center; height: 100vh;">
+    <div th:if="${userRemoveErrMsg}" class="removeUserErr" role="alert">
+        <span th:text="${userRemoveErrMsg}"></span>
+    </div>
     <table class="tg">
         <thead>
         <tr>
@@ -144,10 +167,11 @@
 <script>
     //Get all the Edit links in the table
     const editLinks = document.querySelectorAll("a[id^='edit-']");
+
     saveHandler = (e) => {
         e.preventDefault();
 
-        //get save link id
+        // Get save link id
         const id = e.target.id.split("-")[1];
 
         // Get row with inputs by target id
@@ -157,11 +181,9 @@
         const inputTags = row.querySelectorAll("input");
         console.log(inputTags);
         // Create object by iterating through each input tag and get values
-        // Create a new FormData object
         const userFetchData = {
             id: id
         };
-
         inputTags.forEach(inputTag => {
             userFetchData[inputTag.name] = inputTag.value;
         });
@@ -171,7 +193,7 @@
         saveLink.removeEventListener("click", saveHandler);
 
         console.log(userFetchData)
-        //fetch user data to database
+        // Fetch user data to database
         fetch("updateUserData", {
             method: "POST",
             headers: {
@@ -194,8 +216,8 @@
 
     editHandler = (e) => {
         e.preventDefault();
-        console.log("Edit clicked");
-        //Get target id
+
+        // Get target id
         const id = e.target.id.split("-")[1];
 
         // Get p with target id
@@ -231,7 +253,30 @@
         // Add event listener to new Save link
         saveLink.addEventListener("click", saveHandler);
     }
-    editLinks.forEach(link => link.addEventListener("click", editHandler));
+
+    onPageLoad = () => {
+        // Remove the onPageLoad listener
+        document.removeEventListener("DOMContentLoaded", onPageLoad);
+
+        // Add event listeners to edit links
+        editLinks.forEach(link => link.addEventListener("click", editHandler));
+
+        // Check if an error div is present in the html
+        const errorDivTag = document.querySelector(".removeUserErr");
+
+        // Fade out the error block
+        if (errorDivTag) {
+            setTimeout(function () {
+                errorDivTag.classList.add("fadeOut");
+                setTimeout(function () {
+                    errorDivTag.remove();
+                }, 2000);
+            }, 2000);
+        }
+    }
+
+    // Add the onPageLoad listener
+    document.addEventListener("DOMContentLoaded", onPageLoad);
 </script>
 </body>
 </html>
