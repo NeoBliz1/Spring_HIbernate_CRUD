@@ -56,7 +56,7 @@ public class UserDaoImp implements UserDao {
     }
 
     @Override
-    public List<User> getListUsers() {
+    public List<User> getUsersList() {
         TypedQuery<User> query = innerEntityManager
                 .createQuery("from User", User.class);
         return query.getResultList();

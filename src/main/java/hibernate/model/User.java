@@ -22,19 +22,20 @@ public class User {
 
    @NonNull private String lastName;
 
+   @Column(unique = true)
    @NonNull private String email;
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj) return true;
-      if (obj == null || getClass() != obj.getClass()) return false;
-      User user = (User) obj;
-      return Objects.equals(getEmail(), user.getEmail());
-
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      User user = (User) o;
+      return Objects.equals(getId(), user.getId())
+              && Objects.equals(getEmail(), user.getEmail());
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(getEmail());
+      return Objects.hash(getId(), getEmail());
    }
 }
