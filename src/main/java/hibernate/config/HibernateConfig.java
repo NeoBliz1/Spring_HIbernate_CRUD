@@ -2,6 +2,7 @@ package hibernate.config;
 
 import hibernate.model.User;
 import jakarta.persistence.EntityManagerFactory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -22,14 +23,10 @@ import java.util.Properties;
 @PropertySource("classpath:db.properties")
 @EnableTransactionManagement
 @ComponentScan(value = "hibernate")
+@RequiredArgsConstructor
 public class HibernateConfig {
 
     private final Environment innerEnv;
-
-    @Autowired
-    public HibernateConfig(Environment env) {
-        innerEnv = env;
-    }
 
     @Bean
     public DataSource getDataSource() {
